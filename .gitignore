@@ -1,6 +1,8 @@
-
+output-files_bug/
 output-files_bug/*/
+output-files/
 output-files/*/
+input-files/
 input-files/*/
 
 PYTHON-scripts/*

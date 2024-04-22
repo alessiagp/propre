@@ -1,0 +1,8 @@
+output-files_bug/*/
+output-files/*/
+input-files/*/
+
+PYTHON-scripts/*
+!PYTHON-scripts/Hs-Hk-plot.py
+!PYTHON-scripts/remove_H_atoms.py
+!PYTHON-scripts/ResRel-MPI.py

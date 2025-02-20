@@ -46,10 +46,9 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-# Automatically detect the script directory
-script_dir = os.path.abspath(os.path.dirname(__file__))
+script_dir = "/home/alessia.guadagnin/propre/lib" 
 sys.path.append(script_dir)
-logger.info("Automatically detected script directory: %s", script_dir)
+logger.info("Using hardcoded script directory: %s", script_dir)
 
 # Import custom modules
 try:

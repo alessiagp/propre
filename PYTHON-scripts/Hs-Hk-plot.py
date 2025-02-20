@@ -59,13 +59,14 @@ while True:
     if desired_folder_name in os.listdir(current_directory):
         desired_path = current_directory
         break
-    elif current_directory == os.path.dirname(current_directory):
-        print("ERROR. 'PYTHON-script' folder has not been found. Please, check it out...\n")
-        quit()
+    #elif current_directory == os.path.dirname(current_directory):
+        #print("ERROR. 'PYTHON-script' folder has not been found. Please, check it out...\n")
+        #quit()
     else:
         current_directory = os.path.dirname(current_directory)
+        break
 
-python_modules_path = desired_path + "/lib"
+python_modules_path = "/home/alessia.guadagnin/propre/lib"
 sys.path.append(python_modules_path)
 
 

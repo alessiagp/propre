@@ -67,13 +67,14 @@ while True:
     if desired_folder_name in os.listdir(current_directory):
         desired_path = current_directory
         break
-    elif current_directory == os.path.dirname(current_directory):
-        print("ERROR. 'PYTHON-script' folder has not been found. Please, check it out...\n")
-        quit()
+    #elif current_directory == os.path.dirname(current_directory):
+        #print("ERROR. 'PYTHON-script' folder has not been found. Please, check it out...\n")
+        #quit()
     else:
         current_directory = os.path.dirname(current_directory)
+        break
 
-python_modules_path = desired_path + "/lib"
+python_modules_path = "/home/alessia.guadagnin/propre/lib"
 sys.path.append(python_modules_path)
 
 # 1.3 Importing user-libraries 
@@ -244,7 +245,7 @@ if __name__ == '__main__':
     whereas 3 is due to the fact that the poistion of each atom is in 3 coordinates (x,y,z).
     """
                    
-    positions = np.array([u.select_atoms('protein').positions for ts in u.trajectory[init_frames_to_remove_traj::step_traj]])
+    positions = np.array([u.select_atoms('all').positions for ts in u.trajectory[init_frames_to_remove_traj::step_traj]])
     
     
     
@@ -388,7 +389,7 @@ if __name__ == '__main__':
             #     (1000 is the default value). 'positions[S]' takes ONLY the positions of the selected atoms, without creating new SubTtrajectory and relative universe, 
             #     that is time consuming. The number of atoms selected (Natoms_Sub) is the lenght of "S" list.
             
-            positions_Sub = np.array([u.select_atoms('protein').positions[S] for ts in u.trajectory[init_frames_to_remove_traj::step_traj]])
+            positions_Sub = np.array([u.select_atoms('all').positions[S] for ts in u.trajectory[init_frames_to_remove_traj::step_traj]])
             Natoms_Sub    = len(S) 
                                  
 

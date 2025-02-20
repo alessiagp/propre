@@ -31,15 +31,13 @@ corresponding to slope u = -1. This part will we done with a third code (not thi
 # 1.1 Importing main libraries 
 import matplotlib
 import math
-import random 
+import random
 import os
 import sys
 import argparse
-
 import numpy as np
 import matplotlib.pyplot as plt
 import MDAnalysis as mda
-
 
 from MDAnalysis.analysis.rms import rmsd
 from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
@@ -52,51 +50,41 @@ from collections import Counter
 import logging
 logging.captureWarnings(True)
 
-
 start_code = datetime.now()
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
 
-# 1.2 Finding the path of the  main folder (usually "PrOpRe") after searching for 'PYTHON-scripts' folder. 
-#     Then, add /lib in order to find our libraries. 
+# Automatically detect the script directory
+script_dir = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(script_dir)
+logger.info("Automatically detected script directory: %s", script_dir)
 
-desired_folder_name = "PYTHON-scripts"
-current_directory = os.getcwd()
-desired_path = None
+# Import custom modules
+try:
+    from inp_out import *
+    from general import *
+    from check_errors import *
+except ModuleNotFoundError as e:
+    logger.error("Required module not found: %s", e)
+    sys.exit(1)
 
-while True:
-    if desired_folder_name in os.listdir(current_directory):
-        desired_path = current_directory
-        break
-    #elif current_directory == os.path.dirname(current_directory):
-        #print("ERROR. 'PYTHON-script' folder has not been found. Please, check it out...\n")
-        #quit()
-    else:
-        current_directory = os.path.dirname(current_directory)
-        break
+# Input Arguments
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, add_help=False)
 
-python_modules_path = "/home/alessia.guadagnin/propre/lib"
-sys.path.append(python_modules_path)
+group_in = parser.add_argument_group("Required Arguments")
 
-# 1.3 Importing user-libraries 
-from inp_out import * 
-from general import *
-from check_errors import * 
+group_in.add_argument('-r', '--ref', dest='RefFile', action='store', metavar='FILE', required=True, help="Reference file")
+group_in.add_argument('-t', '--traj', dest='TrajFile', action='store', metavar='FILE', required=True, help="Trajectory file")
+group_in.add_argument('-m', '--mapp', dest='nMapp', metavar='INT', help="Optional mapping parameter")
+group_in.add_argument('-f', '--frames', dest='nFrames', metavar='STR/INT', help="Optional frames parameter")
+group_in.add_argument('-s', '--step', dest='step', metavar='FLOAT', help="Optional step size")
+group_in.add_argument('-c', '--checkpoint', dest='RestartFile', action='store', metavar='FILE', help="Optional checkpoint file")
+group_in.add_argument('-n', '--ncpu', dest='NumberCpu', metavar='INT', help="Optional CPU count")
 
-# 1.4 Input Arguments -------------------------------------------------------------------------------------------------------------------
-parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, add_help=False) 
+group_in.add_argument('-h', '--help', action='help', help="Show this help message and exit")
 
-group_in=parser.add_argument_group("Required Arguments") 
-					                                             
-group_in.add_argument('-r', '--ref',     dest='RefFile',     action='store', metavar = 'FILE', help = argparse.SUPPRESS)        # Mandatory
-group_in.add_argument('-t', '--traj',    dest='TrajFile',    action='store', metavar = 'FILE', help = argparse.SUPPRESS)        # Mandatory 
-group_in.add_argument('-h', '--help',    action='help',      help = argparse.SUPPRESS)                                          # Optional
-group_in.add_argument('-m', '--mapp',    dest='nMapp',       metavar = 'INT',     help = argparse.SUPPRESS)                     # Optional 
-group_in.add_argument('-f', '--frames',  dest='nFrames',     metavar = 'STR/INT', help = argparse.SUPPRESS)                     # Optional
-group_in.add_argument('-s', '--step',    dest='step',        metavar = 'FLOAT',   help = argparse.SUPPRESS)                     # Optional
-group_in.add_argument('-c', '--checkpoint', dest='RestartFile', action ='store',      metavar = 'FILE', help = argparse.SUPPRESS)  # Optional 
-group_in.add_argument('-n', '--ncpu',    dest='NumberCpu',   metavar = 'INT',     help = argparse.SUPPRESS)                     # Optional
-# --------------------------------------------------------------------------------------------------------------------------------------
- 
 
 
 if __name__ == '__main__':

@@ -578,17 +578,31 @@ if __name__ == '__main__':
 
     # 8.1 The closest slope value to -1 or the righmost value (with higher Relevance) of 'slope' list in the interval selected (default: [-1.10,-0.90]) has been chosen.
     #     The definition of list changes according with the option chosen: "bin" or "density".
-     
+    
+    
+    ### BUGGGGG ####----------------------------
+    #if(option.strip() == 'density'):
+    #    Hs_area_best_slope = [x[0] for x in Hs_Hk_N[index_closest*DensityPoints : (index_closest*DensityPoints + DensityPoints)]]
+    #    Hk_area_best_slope = [x[1] for x in Hs_Hk_N[index_closest*DensityPoints : (index_closest*DensityPoints + DensityPoints)]]
+    #    N_area_best_slope  = [x[2] for x in Hs_Hk_N[index_closest*DensityPoints : (index_closest*DensityPoints + DensityPoints)]] 
+    #   
+    #if(option.strip() == "bin"):
+    #    Hs_area_best_slope = [x[0] for x in Hs_Hk_N if bin*(index_closest + 1/2) <= x[0] < bin*(index_closest + 3/2)] 
+    #    Hk_area_best_slope = [x[1] for x in Hs_Hk_N if bin*(index_closest + 1/2) <= x[0] < bin*(index_closest + 3/2)] 
+    #    N_area_best_slope  = [x[2] for x in Hs_Hk_N if bin*(index_closest + 1/2) <= x[0] < bin*(index_closest + 3/2)]
+    ### BUGGGGG ####----------------------------
+    
     if(option.strip() == 'density'):
-        Hs_area_best_slope = [x[0] for x in Hs_Hk_N[index_closest*DensityPoints : (index_closest*DensityPoints + DensityPoints)]]
-        Hk_area_best_slope = [x[1] for x in Hs_Hk_N[index_closest*DensityPoints : (index_closest*DensityPoints + DensityPoints)]]
-        N_area_best_slope  = [x[2] for x in Hs_Hk_N[index_closest*DensityPoints : (index_closest*DensityPoints + DensityPoints)]] 
+        Hs_area_best_slope = [x[0] for x in Hs_Hk_N[(index_closest-1)*DensityPoints : (index_closest*DensityPoints )]]
+        Hk_area_best_slope = [x[1] for x in Hs_Hk_N[(index_closest-1)*DensityPoints : (index_closest*DensityPoints )]]
+        N_area_best_slope  = [x[2] for x in Hs_Hk_N[(index_closest-1)*DensityPoints : (index_closest*DensityPoints )]] 
        
-    if(option.strip() == "bin"):
-        Hs_area_best_slope = [x[0] for x in Hs_Hk_N if bin*(index_closest + 1/2) <= x[0] < bin*(index_closest + 3/2)] 
-        Hk_area_best_slope = [x[1] for x in Hs_Hk_N if bin*(index_closest + 1/2) <= x[0] < bin*(index_closest + 3/2)] 
-        N_area_best_slope  = [x[2] for x in Hs_Hk_N if bin*(index_closest + 1/2) <= x[0] < bin*(index_closest + 3/2)]
-
+    if(option.strip() == "bin"):        
+        
+        Hs_area_best_slope = [x[0] for x in Hs_Hk_N if bin*(index_closest) <= x[0] < bin*(index_closest + 1)] 
+        Hk_area_best_slope = [x[1] for x in Hs_Hk_N if bin*(index_closest) <= x[0] < bin*(index_closest + 1)] 
+        N_area_best_slope  = [x[2] for x in Hs_Hk_N if bin*(index_closest) <= x[0] < bin*(index_closest + 1)]
+    
 
     # 8.2 Finding the optimal number of sites, corresponding at the number of sites having highest frequency.
     #     Considering that there could be more than one 'Nsites' having same highest frequency, 
@@ -612,7 +626,7 @@ if __name__ == '__main__':
     
     ## 8.2.4 Saving the bigger value in the latter list: such value is the OPTIMAL NUMBER OF SITES 
     optimal_number_of_sites = max(list_Nsites_max_frequency)
-    
+        
     ## 8.2.5 Printing on screen what is the optimal number of sites 
     print(f"\n● The optimal number of sites is {optimal_number_of_sites}... 80% completed.")
     
@@ -635,36 +649,50 @@ if __name__ == '__main__':
         c) 3rd plot: Slope of derivative plot and straight line with equation u = -1 
         d) 4th plot: Histogram of frequencies, that is the number of sites with more occourrences             
     """
+    
+    np.savez_compressed('data.npz',
+    Hs=Hs,
+    Hk=Hk,
+    N=N,
+    Hs_avg=Hs_avg,
+    Hk_avg=Hk_avg,
+    Hs_area_best_slope=Hs_area_best_slope,
+    Hk_area_best_slope=Hk_area_best_slope,
+    slope=slope,
+    SlopeRange=SlopeRange,
+    N_area_best_slope=N_area_best_slope,
+    index_closest=index_closest
+)
 
-    # Plot 1: Scatter Plot, Average Hs-Hk curve, Zoom of the region of interest (where the slope is -1) 
-    ax = plt.subplot()
-    Hs_Hk_scatter_plot(ax, Hs, Hk, N, Hs_avg, Hk_avg, Hs_area_best_slope, Hk_area_best_slope) 
-    plt.savefig("Reso.pdf", format="pdf", bbox_inches="tight")
-    plt.close('all')
-
-    
-    # Plot 2: Zoom of Resolution and Relevance curve (Hk-Hs) in the windows where the slope is -1 
-    plt.subplot()   
-    Hs_Hk_scatter_plot_zoom(Hs_avg, Hk_avg, Hs_area_best_slope, Hk_area_best_slope, N_area_best_slope)
-    plt.savefig("Zoom-Reso.pdf", format="pdf", bbox_inches="tight")
-    plt.close('all')
-
-    
-    # Plot 3: Slope of derivative plot and straight line with equation u = -1 
-    slope_plot_density_opt(slope, SlopeRange)
-    plt.savefig("slope.pdf", format="pdf", bbox_inches="tight")
-    plt.close()
-    
-    
-    # Plot 4: HISTOGRAM OF FREQUENCIES: Number of sites with more occourrences
-    ax = plt.subplot()
-    histo_Nsites_plot(ax, N_area_best_slope)
-    plt.savefig("histo_Nsites.pdf", format="pdf", bbox_inches="tight")
-    plt.close()
-    
-    
-    print("\n● Saving plots in PDF format... 95% completed.")
-    print("\n● No Errors! 100% completed.")
+    ## Plot 1: Scatter Plot, Average Hs-Hk curve, Zoom of the region of interest (where the slope is -1) 
+    #ax = plt.subplot()
+    #Hs_Hk_scatter_plot(ax, Hs, Hk, N, Hs_avg, Hk_avg, Hs_area_best_slope, Hk_area_best_slope) 
+    #plt.savefig("Reso.pdf", format="pdf", bbox_inches="tight")
+    #plt.close('all')
+#
+    #
+    ## Plot 2: Zoom of Resolution and Relevance curve (Hk-Hs) in the windows where the slope is -1 
+    #plt.subplot()   
+    #Hs_Hk_scatter_plot_zoom(Hs_avg, Hk_avg, Hs_area_best_slope, Hk_area_best_slope, N_area_best_slope)
+    #plt.savefig("Zoom-Reso.pdf", format="pdf", bbox_inches="tight")
+    #plt.close('all')
+#
+    #
+    ## Plot 3: Slope of derivative plot and straight line with equation u = -1 
+    #slope_plot_density_opt(slope, SlopeRange)
+    #plt.savefig("slope.pdf", format="pdf", bbox_inches="tight")
+    #plt.close()
+    #
+    #
+    ## Plot 4: HISTOGRAM OF FREQUENCIES: Number of sites with more occourrences
+    #ax = plt.subplot()
+    #histo_Nsites_plot(ax, N_area_best_slope)
+    #plt.savefig("histo_Nsites.pdf", format="pdf", bbox_inches="tight")
+    #plt.close()
+    #
+    #
+    #print("\n● Saving plots in PDF format... 95% completed.")
+    #print("\n● No Errors! 100% completed.")
     
     
 

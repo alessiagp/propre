@@ -661,7 +661,7 @@ def checking_errors_DensityPoints_opt_arg(DensityPoints):
                     print_help_density_HsHkplot()
                     quit()
             print("\n● '-d/--DensityPoints {}' set. The number of points in each interval for the calculation of average Hs and Hk is {}.".format(DensityPoints,DensityPoints)) 
-            print("                                 DensityPoints = {}... 3% completed.\n".format(DensityPoints)) 
+            print("                                 DensityPoints = {}... 30% completed.\n".format(DensityPoints)) 
     
         if(sys.argv[1]=='bin'):  # If 'bin' option is set
             print("\n####################################################################################")
@@ -676,7 +676,7 @@ def checking_errors_DensityPoints_opt_arg(DensityPoints):
         if(sys.argv[1]=='density'):
             DensityPoints = 100
             print("\n● '-d/--DensityPoint' not set. The number of points in each interval for the calculation of average Hs and Hk is 100.")
-            print("                               DensityPoints = 100 (default value)... 3% completed.\n")
+            print("                               DensityPoints = 100 (default value)... 30% completed.\n")
 
     return DensityPoints
     
@@ -712,7 +712,7 @@ def checking_errors_NumberWindows_opt_arg(NumberWindows):
                     print_help_density_HsHkplot()
                     quit()           
             print("\n● '-w/--NumberWindows {}' set. The number of windows into which the Resolution range is splitted is {}.".format(NumberWindows,NumberWindows))
-            print("                               NumberWindows = {} (default value)... 3% completed.\n".format(NumberWindows))
+            print("                               NumberWindows = {} (default value)... 30% completed.\n".format(NumberWindows))
     
         if(sys.argv[1]=='density'):  # If 'bin' option is set
             print("\n####################################################################################")
@@ -727,7 +727,7 @@ def checking_errors_NumberWindows_opt_arg(NumberWindows):
         if(sys.argv[1]=='bin'):
             NumberWindows = 50   
             print("\n● '-w/--NumberWindows' not set. The number of windows into which the Resolution range is splitted is 50.")
-            print("                                NumberWindows = 50 (default value)... 3% completed.\n")
+            print("                                NumberWindows = 50 (default value)... 30% completed.\n")
     
     return NumberWindows
     
@@ -812,14 +812,14 @@ def checking_errors_SlopeRange_opt_arg(SlopeRange):
                        print_help_bin_HsHkplot()
                    quit()
             else:          
-                print("\n● '-s/--SlopeRange closest' set. The closest value of slope to -1 is token... 4% completed.\n")
+                print("\n● '-s/--SlopeRange closest' set. The closest value of slope to -1 is token... 40% completed.\n")
                    
          
     if(SlopeRange is None): 
         SlopeRange = '10%'
     
         print("\n● '-s/--SlopeRange' not set. The default value is 10%. The range is -1 \u00B1 10% i.e. [-1.10, -0.90]")
-        print("                             The rightmost value of slope in such range is token... 4% completed.\n")
+        print("                             The rightmost value of slope in such range is token... 40% completed.\n")
     
     return SlopeRange
 

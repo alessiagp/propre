@@ -5,6 +5,7 @@ output-files/*/
 input-files/
 input-files/*/
 lib/__pycache__/*
+test-stride/*
 
 PYTHON-scripts/*
 !PYTHON-scripts/Hs-Hk-slope.py

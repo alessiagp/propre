@@ -105,7 +105,7 @@ In this section, we present the tool for identifying the optimal number of sites
 <br/>
 
 # 3 - Usage 
-The typical usage of the program consists in a call to `remove_H_atoms.py`, `ResRel-MPI.py` and `Hs-Hk-plot.py` in succession by using Python3: 
+The typical usage of the program consists in a call to `remove_H_atoms.py`, `ResRel-MPI.py` and `Hs-Hk-slope.py` in succession by using Python3: 
 
 <div align ="justify">
 <ul>
@@ -119,10 +119,12 @@ The typical usage of the program consists in a call to `remove_H_atoms.py`, `Res
     </ul>  
 For a more comprehensive understanding of the program's functionality and implementation details, please refer to <b><a href="#5---resrel-mpipy">Section 5</a></b> in this documentation.</li><br>
  
-<li> <b><code>Hs-Hk-plot</code></b>: this code serves a dual purpose:
+<li> <b><code>Hs-Hk-plot</code></b>: this code calculates the number of sites of a biomolecule from an atomistic trajectory, corresponding to a specific slope point on the previously computed Relevance–Resolution curve. The program generate a compact python output, containing:
     <ul>
-    <li> Drawing a saving various plots related to Resolution and Relevance, slope, and histogram of frequencies. </li>
-    <li> Calculating the optimal number of sites for a biomolecule based on an atomistic trajectory, with the aim of minimizing the loss of information when atoms are decimated. </li>
+    <li> pippo
+    <li> pluto
+    <li> paperino
+</li>
     </ul>
 Further details regarding the functionality and usage of this code will be provided in <b><a href="#6---hs-hk-plotpy">Section 6</a></b>. </li><br>
 

@@ -4,8 +4,9 @@ output-files/
 output-files/*/
 input-files/
 input-files/*/
+lib/__pycache__/*
 
 PYTHON-scripts/*
-!PYTHON-scripts/Hs-Hk-plot.py
+!PYTHON-scripts/Hs-Hk-slope.py
 !PYTHON-scripts/remove_H_atoms.py
 !PYTHON-scripts/ResRel-MPI.py

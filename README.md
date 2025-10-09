@@ -105,7 +105,7 @@ In this section, we present the tool for identifying the optimal number of sites
 <br/>
 
 # 3 - Usage 
-The typical usage of the program consists in a call to `remove_H_atoms.py`, `ResRel-MPI.py` and `Hs-Hk-plot.py` in succession by using Python3: 
+The typical usage of the program consists in a call to `remove_H_atoms.py`, `ResRel-MPI.py` and `Hs-Hk-slope.py` in succession by using Python3: 
 
 <div align ="justify">
 <ul>
@@ -119,11 +119,8 @@ The typical usage of the program consists in a call to `remove_H_atoms.py`, `Res
     </ul>  
 For a more comprehensive understanding of the program's functionality and implementation details, please refer to <b><a href="#5---resrel-mpipy">Section 5</a></b> in this documentation.</li><br>
  
-<li> <b><code>Hs-Hk-plot</code></b>: this code serves a dual purpose:
-    <ul>
-    <li> Drawing a saving various plots related to Resolution and Relevance, slope, and histogram of frequencies. </li>
-    <li> Calculating the optimal number of sites for a biomolecule based on an atomistic trajectory, with the aim of minimizing the loss of information when atoms are decimated. </li>
-    </ul>
+<li> <b><code>Hs-Hk-slope</code></b>: this code calculates the number of sites of a biomolecule from an atomistic trajectory, corresponding to a specific slope point on the previously computed Relevance–Resolution curve. The program generate a detailed python output and a text file <code>Opt-number-of-sites-TargetSlope.txt</code> that provides a summary of the arguments used and, more importantly, the optimal number of sites identified.
+
 Further details regarding the functionality and usage of this code will be provided in <b><a href="#6---hs-hk-plotpy">Section 6</a></b>. </li><br>
 
 </ul>
@@ -338,10 +335,10 @@ The output of the code includes two files:
 <p align="justify"> To simplify the curve, we compute the average values for Resolution (<b>H̅<sub>s</sub></b>) and Relevance (<b>H̅<sub>k</sub></b>) (<b>Figure 4c</b> and <b>Figure 5c</b>). These average values provide a smoother representation of the overall trend in the data. Next, we analyze the slope between each pair of consecutive points on the average curve. The slope is calculated using the formula <i>ΔY/ΔX</i>, where <i>Y</i> represents the average Relevance points (<b>H̅<sub>k</sub></b>) and <i>X</i> represents average Resolution (<b>H̅<sub>s</sub></b>) points. </p>
 
 <p align="justify">
-In the existing literature, it is suggested that the partition where the sum of Resolution (<b>H̅<sub>s</sub></b>) and Relevance (<b>H̅<sub>k</sub></b>) is the largest occurs when the slope μ = -1. This observation aligns with Zipf's law. In this context, it implies that the optimal tradeoff between the simplicity of the representation (low resolution) and its informative nature (high relevance) occurs when the slope μ = -1. This point represents the sweet spot where the protein coarsening achieves the best balance between retaining important information and minimizing complexity.</p>
+The slope provides a quantitative measure of the tradeoff between relevance and resolution. In the existing literature, it is suggested that the partition where the sum of Resolution (<b>H̅<sub>s</sub></b>) and Relevance (<b>H̅<sub>k</sub></b>) is the largest occurs when the slope μ = -1. This observation aligns with Zipf's law. In this context, it implies that the optimal tradeoff between the simplicity of the representation (low resolution) and its informative nature (high relevance) occurs when the slope μ = -1. This point represents the sweet spot where the protein coarsening achieves the best balance between retaining important information and minimizing complexity. Other choices of slope are also possible. For example, selecting μ = 0 corresponds to the maximum of the Relevance curve, favoring the most informative representation at the expense of reduced resolution. </p>
 
 <p align="justify">
-After identifying the point with a slope closest to -1, we can determine the specific Resolution (H<sub>s</sub>) and Relevance (H<sub>k</sub>) points falling within that chosen interval. Each point within that interval corresponds to a specific number of retained sites. Therefore, the optimal number of sites can be determined by identifying the Relevance and Resolution points that have the highest occurrence in terms of the number of retained sites.</p>
+  After identifying the interval of the average curve where the slope μ is closest to the chosen TargetSlope, the corresponding Resolution (H<sub>s</sub>) and Relevance (H<sub>k</sub>) points are selected. Each of these points corresponds to a specific number of retained sites. The optimal number of sites is then computed as the average of the values within this interval, while the standard deviation is also reported to quantify the variability of the results. </p>
 
 
 ## 6.2 - Tasks 
@@ -381,12 +378,13 @@ The Relevance and Resolution plot consists of a total of <i>N</i> points, with t
 ## 6.3 - "Density" Task 
 
 ### 6.3.1 - Requirements 
-<p align="justify"> The <i><code>density</code></i> task requires one mandatory file: <b>Hs-Hk-Nsites-${ProteinName}.txt</b>. This file contains the values of resolution (H<sub>s</sub>), relevance (H<sub>k</sub>), and the number of retained sites associated with each H<sub>s</sub> and H<sub>k</sub> point. Additionally, there are two optional arguments: </p>
+<p align="justify"> The <i><code>density</code></i> task requires one mandatory file: <b>Hs-Hk-Nsites-${ProteinName}.txt</b>. This file contains the values of resolution (H<sub>s</sub>), relevance (H<sub>k</sub>), and the number of retained sites associated with each H<sub>s</sub> and H<sub>k</sub> point. Additionally, there are three optional arguments: </p>
 
 <div align = "justify">
 <ul>  
+<li> <i><code>TargetSlope</code></i>: A float that specifies the target slope for selecting the optimal interval. </li>
 <li> <i><code>DensityPoints</code></i>: An integer that specifies the desired number of points in each variable-length interval. </li>
-<li> <i><code>SlopeRange</code></i>: Specifies the range within which the best interval is determined based on the average curve of H̅<sub>s</sub> and H̅<sub>k</sub> having slope close to -1. </li>
+<li> <i><code>SlopeRange</code></i>: Specifies the range within which the best interval is determined based on the average curve of H̅<sub>s</sub> and H̅<sub>k</sub> having slope close to target slope. </li>
 </ul>
 </div>
   
@@ -397,11 +395,11 @@ The Relevance and Resolution plot consists of a total of <i>N</i> points, with t
 <p align="justify"> To run the <b>Hs-Hk-plot.py</b> script with <b>density</b> task, the command-line is the following:</p>
 
 ```sh
-python3 Hs-Hk-plot.py density -f <Hs-Hk-Nsites-${ProteinName}.txt> [-d <density>] [-s <range>] 
+python3 Hs-Hk-plot.py density -f <Hs-Hk-Nsites-${ProteinName}.txt> [-t <slopeTarget>] [-d <density>] [-s <range>] 
 
    or:
    
-python3 Hs-Hk-plot.py density --file <Hs-Hk-Nsites-${ProteinName}.txt> [--DensityPoints <density>] [--SlopeRange <range>] 
+python3 Hs-Hk-plot.py density --file <Hs-Hk-Nsites-${ProteinName}.txt> [--TargetSlope <slopeTarget>] [--DensityPoints <density>] [--SlopeRange <range>] 
 ```
 <blockquote> 
   <p align="justify">
@@ -427,12 +425,13 @@ python3 Hs-Hk-plot.py density --file <Hs-Hk-Nsites-${ProteinName}.txt> [--Densit
     ----------------------------------------------------
 
 <br>  
+<li> <b><code>TargetSlope</code></b>: This is an optional argument (<code>-t/--TargetSlope</code>) that specifies the desidered slope used to determine the best interval on the average H<sub>s</sub> - H<sub>k</sub> curve.  By default, the value is set to -1. </li><br>
 <li> <b><code>DensityPoints</code></b>: This is an optional argument (<code>-d/--DensityPoints</code>) that specifies the number of points <i>D</i> that fall within each interval of variable length. By default, the value is set to 100. The density of points within each interval is used to compute the average values of H<sub>s</sub> (denoted as H̅<sub>s</sub>) and H<sub>k</sub> (denoted as  H̅<sub>k</sub>). Using this argument, you can easily change the default value to suit your needs. </li><br>
 
-<li> <b><code>SlopeRange</code></b>: This is an optional argument that determines how to find the best interval on the average curve with slope μ close to -1 for computing the optimal number of sites. the slope  μ = -1 is associated to the point of optimal tradeoff between parsimony of the representation (low resolution) and its informativeness (high relevance). There are two ways to define this argument:
+<li> <b><code>SlopeRange</code></b>: This is an optional argument that determines how to find the best interval on the average curve with slope μ close to the target slope for computing the optimal number of sites. There are two ways to define this argument:
      <ul>
-     <li> <ins><i> Percentage Range </i></ins>: By default, the argument is set as a range close to -1 in terms of percentage. The default range spans from -1.10 to -0.90, which corresponds to a 10% range. Within this range, the rightmost value with a higher resolution is chosen. It is generally preferred to select a range with values close to -1: selecting a higher percentage range could result in values that are too far from -1 and therefore not optimal for finding the best interval on the average curve and, consequently, the optimal number of sites. </li>
-     <li> <ins><i> Closest Value </i></ins>: Alternatively, you can specify the argument as "closest" (<code>-s closest</code>) to identify the closest value of the slope to -1. This option allows you to find the specific point on the curve that has the slope μ closest to -1. </li>
+     <li> <ins><i> Percentage Range </i></ins>: By default, the argument is set as a range close to target slope in terms of percentage. The default range spans the 10% around the target slope. It is generally preferred to select a range with values close to target slope: selecting a higher percentage range could result in values that are too far from the target slope and therefore not optimal for finding the best interval on the average curve and, consequently, the optimal number of sites. </li>
+     <li> <ins><i> Closest Value </i></ins>: Alternatively, you can specify the argument as "closest" (<code>-s closest</code>) to identify the closest value of the slope to the target one. This option allows you to find the specific point on the curve that has the slope μ closest to the target slope. </li>
      </ul> 
 </li>
 </ul>  
@@ -442,13 +441,14 @@ python3 Hs-Hk-plot.py density --file <Hs-Hk-Nsites-${ProteinName}.txt> [--Densit
 ## 6.4 - "bin" Task 
 
 ### 6.4.1 - Requirements 
-<p align="justify"> The <i><code>bin</code></i> task requires one mandatory file: <b>Hs-Hk-Nsites-${ProteinName}.txt</b>. This file contains the values of resolution (H<sub>s</sub>), relevance (H<sub>k</sub>), and the number of retained sites associated with each H<sub>s</sub> and H<sub>k</sub> point. Additionally, there are two optional arguments:
+<p align="justify"> The <i><code>bin</code></i> task requires one mandatory file: <b>Hs-Hk-Nsites-${ProteinName}.txt</b>. This file contains the values of resolution (H<sub>s</sub>), relevance (H<sub>k</sub>), and the number of retained sites associated with each H<sub>s</sub> and H<sub>k</sub> point. Additionally, there are three optional arguments:
 
 <div align = "justify">
 <ul> 
+  <li> <i><code>TargetSlope</code></i>: A float that specifies the target slope for selecting the optimal interval. </li>
   <li> <i><code>NumberWindows</code></i>: This argument is an integer value that determines the number of windows or intervals into which the x-axis (Resolution) is divided. While the number of windows is fixed, the density of points within each window may vary. Unlike the "density" option, where the density of points is kept constant, using the "bin" option, different windows may contain different numbers of data points, resulting in variable density across the intervals. </li>
 
-<li> <i><code>SlopeRange</code></i>: Specifies the range within which the best interval is determined based on the average curve of H̅<sub>s</sub> and H̅<sub>k</sub> having slope μ close to -1. </li>
+<li> <i><code>SlopeRange</code></i>: Specifies the range within which the best interval is determined based on the average curve of H̅<sub>s</sub> and H̅<sub>k</sub> having slope μ close to target slope. </li>
 </ul>
 </div>
 
@@ -460,11 +460,11 @@ python3 Hs-Hk-plot.py density --file <Hs-Hk-Nsites-${ProteinName}.txt> [--Densit
 <p align="justify"> To run the <b>Hs-Hk-plot.py</b> script with the <b>bin</b> task, the command-line is the following: </p>
 
 ```sh
-python3 Hs-Hk-plot.py bin -f <Hs-Hk-Nsites-${ProteinName}.txt> [-w <nWindows>] [-s <range>] 
+python3 Hs-Hk-plot.py bin -f <Hs-Hk-Nsites-${ProteinName}.txt> [-t <slopeTarget>] [-w <nWindows>] [-s <range>] 
 
    or:
    
-python3 Hs-Hk-plot.py bin --file <Hs-Hk-Nsites-${ProteinName}.txt> [--NumeberWindows <nWindows>] [--SlopeRange <range>] 
+python3 Hs-Hk-plot.py bin --file <Hs-Hk-Nsites-${ProteinName}.txt> [--TargetSlope <slopeTarget>] [--NumeberWindows <nWindows>] [--SlopeRange <range>] 
 ```
 <blockquote> 
 <p align="justify">
@@ -492,31 +492,44 @@ python3 Hs-Hk-plot.py bin --file <Hs-Hk-Nsites-${ProteinName}.txt> [--NumeberWin
   ```
 
 <br>
+<li> <b><code>TargetSlope</code></b>: This is an optional argument (<code>-t/--TargetSlope</code>) that specifies the desidered slope used to determine the best interval on the average H<sub>s</sub> - H<sub>k</sub> curve.  By default, the value is set to -1. </li><br>
 <li> <b><code>NumberWindows</code></b>: This is an optional argument (<code>-w/--NumberWindows</code>) that specifies the number of intervals into which the x-axis (Resolution) is divided. The length of each interval is fixed, while the number of points falling within each interval can vary. This is illustrated schematically in <b>Figure 5</b>. By default, the value of <i>W</i> is set to 50, but you can modify it using the <code>-w</code> flag if desired. Since the Resolution axis ranges from 0 to 1 by definition, the length of each interval, also referred to as <i>bin</i>, is thus defined as <i>1/W</i>. Within intervals of the same bin size, the average value of H<sub>s</sub> (denoted as H̅<sub>s</sub>) is obtained at the midpoint of each bin. On the other hand, the average value of H<sub>k</sub> (denoted as H̅<sub>k</sub>) is computed for each window by taking the arithmetic mean of all the Relevance values within that specific window. </li><br>
 
-<li> <b><code>SlopeRange</code></b>: This is an optional argument that determines how to find the best interval on the average curve with slope μ close to -1 for computing the optimal number of sites. the slope  μ = -1 is associated to the point of optimal tradeoff between parsimony of the representation (low resolution) and its informativeness (high relevance). There are two ways to define this argument:
+<li> <b><code>SlopeRange</code></b>: This is an optional argument that determines how to find the best interval on the average curve with slope μ close to the target slope for computing the optimal number of sites. There are two ways to define this argument:
      <ul>
-     <li> <ins><i>Percentage Range</i></ins>: By default, the argument is set as a range close to -1 in terms of percentage. The default range spans from -1.10 to -0.90, which corresponds to a 10% range. Within this range, the rightmost value with a higher resolution is chosen. It is generally preferred to select a range with values close to -1: selecting a higher percentage range could result in values that are too far from -1 and therefore not optimal for finding the best interval on the average curve and, consequently, the optimal number of sites. </li>
-     <li> <ins><i>Closest Value</i></ins>: Alternatively, you can specify the argument as "closest" (<code>-s closest</code>) to identify the closest value of the slope to -1. This option allows you to find the specific point on the curve that has the slope closest to -1. </li>
-     </ul>
+     <li> <ins><i> Percentage Range </i></ins>: By default, the argument is set as a range close to target slope in terms of percentage. The default range spans the 10% around the target slope. It is generally preferred to select a range with values close to target slope: selecting a higher percentage range could result in values that are too far from the target slope and therefore not optimal for finding the best interval on the average curve and, consequently, the optimal number of sites. </li>
+     <li> <ins><i> Closest Value </i></ins>: Alternatively, you can specify the argument as "closest" (<code>-s closest</code>) to identify the closest value of the slope to the target one. This option allows you to find the specific point on the curve that has the slope μ closest to the target slope. </li>
+     </ul> 
 </li>
 </ul>
 </div>
 
 ## 6.5 - Output
-<p align="justify"> This code generates 4 PDF plots and a TXT file as output: </p>
+<p align="justify"> This code generates:  </p>
 
 <div align = "justify">
 <ul> 
-<li> <i><code>Reso.pdf</code></i>: This plot displays the Resolution (H<sub>s</sub>) and Relevance (H<sub>k</sub>) points, with the same color representing points obtained from the same number of retained sites but different mappings. Additionally, a zoomed-in region of interest is shown where the slope μ is close to -1, providing a detailed view of that area.</li><br>
-
-<li> <i><code>Zoom-Reso.pdf</code></i>: This plot focuses specifically on the region where the slope μ is -1, providing a closer look at the relationship between Relevance and Resolution in the region of our interest. </li><br>
-
-<li> <i><code>slope.pdf</code></i>: A plot of the slope values against an increasing index (from 1 to N points). This plot shows the slope μ values plotted against an increasing index ranging from 1 to the total number of points. This visualization provides a closer look at the relationship between Relevance and Resolution in the region of our interest. </li><br>
-
-<li> <i><code>histo_Nsites.pdf</code></i>: This plot displays the frequency distribution of the number of sites with different occurrences. It provides insights into the distribution of retained sites and their frequencies. </li><br>
-
-<li> <i><code>Opt-number-of-sites.txt</code></i>: A text file that provides a summary of the arguments used and, more importantly, the optimal number of sites for a biomolecule derived from an atomistic trajectory, such that the loss of information after decimating atoms is minimized. This information is valuable for determining the appropriate number of retained sites that balances the preservation of essential structural information with the reduction in computational complexity. </li>
+  <li> <code>data_TargetSlope-.npz</code> compact python datafile containing :
+   <ul> 
+    <li> <code>Hs</code> : Resolution values (array).
+    <li> <code>Hk</code> : Relevance values (array).
+    <li> <code>N</code> : Number of sites associated to each (Hs, Hk) pair (array).
+    <li> <code>Hs_avg</code> : Resolution averaged per interval/bin (array).
+    <li> <code>Hk_avg</code> : Relevance averaged per interval/bin (array).
+    <li> <code>slope</code> :  Estimated derivative d(Hk_avg)/d(Hs_avg) between consecutive averaged points (array).
+    <li> <code>SlopeRange</code> : Criterion used to select the ``best-slope'' interval; either the string <code>closest</code> or a percentage string like  <code>5%</code>.
+    <li> <code>index_closest</code> : Indices (list of int) of intervals/bins selected as “best” according to <code>SlopeRange</code> and <code>TargetSlope</code>.
+    <li> <code>Hs_area_best_slope</code>: All original <code>Hs</code> values whose indices fall inside the selected interval(s) (array).
+    <li> <code>Hk_area_best_slope</code>: All original <code>Hk</code> values whose indices fall inside the selected interval(s) (array).
+    <li> <code>N_area_best_slope</code>: All original <code>N</code> values whose indices fall inside the selected interval(s) (array).
+    <li> <code>N_opt</code>: Estimated optimal number of sites (float; mean of <code>N_area_best_slope</code>).
+    <li> <code>std_N_opt</code>: Standard deviation of the optimal number of sites (float; std of <code>N_area_best_slope</code>).  
+    </li> 
+    </ul>
+    
+  <li> <code>Opt-number-of-sites.txt</code></i>: A text file that provides a summary of the arguments used and, more importantly, the optimal number of sites for a biomolecule derived from an atomistic trajectory, such that the loss of information after decimating atoms is minimized. This information is valuable for determining the appropriate number of retained sites that balances the preservation of essential structural information with the reduction in computational complexity. 
+    
+</li>
 </ul>
 </div>
 
@@ -524,16 +537,16 @@ python3 Hs-Hk-plot.py bin --file <Hs-Hk-Nsites-${ProteinName}.txt> [--NumeberWin
 
 # 7 - Examples 
 
-<p align="justify"> Inside the <code>tests/</code> directory there is the complete list of example files for a lot of proteins, allowing the user to try the three codes in succession. </p>
+<p align="justify"> Inside the <code>tests/</code> directory there is the complete list of example files, allowing the user to try the three codes in succession. </p>
 
-<p align="justify"> Hereafter, for the sake of clarity, only four examples are reported. </p> 
+<p align="justify"> Hereafter, for the sake of clarity, only one example is reported. </p> 
 
 ```perl
 # The reference and trajectory files, namely 1igd_noH.gro and 1igd_noH.xtc, have already been processed 
 # to exclude hydrogen atoms. As a result, the script "remove_H_atoms.py" was not utilized in this context.
 
 ####
-name="1igd_noH"
+name="1dsl_noH"
 PYTHONDIR=../PYTHON-scripts
 inputDIR=../input-files/${name}
 
@@ -545,90 +558,16 @@ rm -r test-${name}
 mkdir test-${name}
 mv trace_${name}.txt Hs-Hk-Nsites-${name}.txt test-${name}
 
-### 2nd part: Hs-Hk-plot (DENSITY OPTION)
+### 2nd part: Hs-Hk-plot (DENSITY OPTION - -1 TARGET SLOPE -  200 POINTS)
 cd test-${name}
-python3 ../$PYTHONDIR/Hs-Hk-plot.py density -f Hs-Hk-Nsites-${name}.txt
-```
-
-```perl
-# The reference and trajectory files, namely 1igd_noH.gro and 1igd_noH.xtc, have already been processed 
-# to exclude hydrogen atoms. As a result, the script "remove_H_atoms.py" was not utilized in this context.
-# A restart is also used in this case, due to interruption of calculation of Resolution and Relevance. 
-
-####
-name="1igd_noH"
-PYTHONDIR=../PYTHON-scripts
-inputDIR=../input-files/${name}
-
-
-### 1st part: ResRel with restart
-python3 $PYTHONDIR/ResRel-MPI.py -r $inputDIR/${name}.gro -t $inputDIR/${name}.xtc -c Hs-Hk-Nsites-${name}.txt  # RESTART 
-
-rm -r test-${name}
-mkdir test-${name}
-mv trace_${name}.txt Hs-Hk-Nsites-${name}.txt test-${name}
+python3 ../$PYTHONDIR/Hs-Hk-plot.py density -f Hs-Hk-Nsites-${name}.txt -t -1.0 -d 200 
 ```
 
 
-```perl
-# ake.gro and ake.xtc are the reference and trajectory files with H atoms.    
-
-###
-name="ake"
-PYTHONDIR=../PYTHON-scripts
-inputDIR=../input-files/${name}
-
-########## 1st part: remove_H_atoms.py ###############
-python3 $PYTHONDIR/remove_H_atoms.py -r $inputDIR/${name}.gro -t $inputDIR/${name}.xtc
-
-mv Reference_noH.gro ../input-files/${name}/${name}_noH.gro
-mv Trajectory_noH.xtc ../input-files/${name}/${name}_noH.xtc
-
-
-########## 2nd part: ResRel.py ###############
-name_noH="${name}_noH"
-
-python3 $PYTHONDIR/ResRel-MPI.py -r $inputDIR/${name_noH}.gro -t $inputDIR/${name_noH}.xtc
-
-rm -r test-${name_noH}
-mkdir test-${name_noH}
-
-mv trace_${name_noH}.txt Hs-Hk-Nsites-${name_noH}.txt test-${name_noH}
-
-
-########## 3rd part: Hs-Hk-plot.py (DENSITY OPTION 200 POINTS) ###############
-cd test-${name_noH}
-
-python3 ../$PYTHONDIR/Hs-Hk-plot.py density -f Hs-Hk-Nsites-${name}.txt -d 200 
-```
-
-```perl
-# The reference and trajectory files, namely 1knt_noH.gro and 1knt_noH.xtc, have already been processed 
-# to exclude hydrogen atoms. As a result, the script "remove_H_atoms.py" was not utilized in this context.
-
-####
-name="1knt_noH"
-PYTHONDIR=../PYTHON-scripts
-inputDIR=../input-files/${name}
-
-
-### 1st part: ResRel (Nmappings = 100, Nframes = 500, Nstep = 1%, Ncpu = 16) 
-python3 $PYTHONDIR/ResRel-MPI.py -r $inputDIR/${name}.gro -t $inputDIR/${name}.xtc -m 100 -f 500 -s 1% -n 16
-
-rm -r test-${name}
-mkdir test-${name}
-mv trace_${name}.txt Hs-Hk-Nsites-${name}.txt test-${name}
-
-### 2nd part: Hs-Hk-plot (BIN OPTION 100 WINDOWS, SlopeRange="closest")
-cd test-${name}
-python3 ../$PYTHONDIR/Hs-Hk-plot.py bin -f Hs-Hk-Nsites-${name}.txt -w 100 -s closest
-```
-
-<p align="justify"> The output files of each test can be also found in <b><code>PrOpRe/output-files/</code></b> directory. </p>
 
 <br />
 
 
 # 8 - Contacts 
 
-Raffaele Fiorentini: raffaele.fiorentini@unitn.it or elio.fiorentini90@gmail.com
+Raffaello Potestio: raffaello.potestio@unitn.it 

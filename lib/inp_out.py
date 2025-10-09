@@ -35,7 +35,7 @@ def print_help_removeH():
 
     print("  [-h] [--help]                                      Give this help list\n")
 
-    print("Report bugs to <raffaele.fiorentini@unitn.it>\n")
+    print("Report bugs to <raffaello.potestio@unitn.it>\n")
     
 
         
@@ -123,7 +123,7 @@ def print_help_ResRel():
     print("  [-c] [--checkpoint]             FILE               Restart FILE (Hs-Hk-Nsites-${ProteinName}.txt) from which the calculation of Hs-Hk-N resumes.") 
     print("  [-h] [--help]                                      Give this help list\n")
    
-    print("Report bugs to <raffaele.fiorentini@unitn.it>\n")
+    print("Report bugs to <raffaello.potestio@unitn.it>\n")
     
 
 # Function: it prints the main usage of "Hs-Hk-plot.py" program
@@ -165,21 +165,22 @@ def print_shorthelp_HsHkplot():
     print("Hereafter the list of OPTIONS:\n");
 
     print("  -f   --file             FILE          Data FILE containing Hs, Hk, and Nsites organized in three different rows")
+    print(" [-t] [--TargetSlope]     FLOAT         Target slope for optimal interval selection (defaults to -1 if not set)")
     print(" [-d] [--DensityPoints]   INT           Constant number of points for the calculation of average Hs and Hk [ONLY FOR *density* OPTION]")
-    print(" [-s] [--SlopeRange]      STR           Range (percentage) of slope close to -1 (default is from -1.10 to -0.90) ")
+    print(" [-s] [--SlopeRange]      STR           Range (percentage) of slope close to the target slope (default is 10% (for a target slope equal to -1 it is from -1.10 to -0.90) ")
     print(" [-w] [--NumberWindows]   INT           Number of windows (default = 50) into which the Resolution range is splitted [ONLY FOR *bin* OPTION]")
     print(" [-h] [--help]                          Give this help list\n")
 
     print("Try: python3 {} <TASK> for more information about the mandatory options of a specific task\n".format(sys.argv[0]))
 
-    print("Report bugs to <raffaele.fiorentini@unitn.it>\n")
+    print("Report bugs to <raffaello.potestio@unitn.it>\n")
      
 
 
 # Function: it prints the help of block.py program for DENSITY option
 def print_help_density_HsHkplot():
-    print("Usage: python3 {} density -f <Hs-Hk-N FILE> [-d <density>] [-s <slope(%)>] ".format(sys.argv[0]))
-    print("   or: python3 {} density --file <Hs-Hk-N FILE> [--DensityPoints <density>] [--SlopeRange <slope(%)>] ".format(sys.argv[0]))
+    print("Usage: python3 {} density -f <Hs-Hk-N FILE> [-t <slopeTarget>] [-d <density>] [-s <slope(%)>] ".format(sys.argv[0]))
+    print("   or: python3 {} density --file <Hs-Hk-N FILE> [--TargetSlope <slopeTarget>] [--DensityPoints <density>] [--SlopeRange <slope(%)>] ".format(sys.argv[0]))
     
     print("\n--------------------------------------------------------------------------------------------------------------------")     
 
@@ -194,38 +195,43 @@ def print_help_density_HsHkplot():
     print("                                                                | Hk-1       Hk-2       Hk-3       .....  Hk-N     |")
     print("                                                                | Nsites-1   Nsites-2   Nsites-3   .....  Nsites-N |")
     print("                                                                ----------------------------------------------------- \n")
+    print("  [TargetSlope]          FLOAT                OPTIONAL       Target slope for selecting the optimal interval.")
+    print("                                                             This value specifies the desired slope (e.g. -1.00) used")
+    print("                                                             to determine the best interval on the average Hs-Hk curve.")
+    print("                                                             If not provided, it defaults to -1.\n")
     print("  [DensityPoints]          INT                OPTIONAL       Every N points (the default value is 100) the average calculation")
     print("                                                             for Hs and Hk is performed. In this way the computation of average values is more fair")
     print("                                                             since the number of points (Hs-Hk) is always the same in each interval.")
     print("                                                             Such value (Integer number) con be changed using this flag.\n")
-    print("  [SlopeRange]             STR                OPTIONAL       After computing the average values for Resolution and Relevance")
-    print("                                                             it is necessary to find the best interval where the slope of this new curve is -1.")
-    print("                                                             Two ways of defining this argument are possible:")
-    print("                                                             ● It is possible to define a range close to -1 in terms of percentage")
-    print("                                                               (default: from -1.10 to -0.90 that corresponds at 10%")
-    print("                                                               and taking the rightmost value in such range (i.e. with higher Resolution)")
-    print("                                                               Higher range values could be not good, since we want a slope very close to -1.")
-    print("                                                               Default value = 10%")
-    print("                                                             ● Another possibility is to take the closest value of slope to -1.")
-    print("                                                               In this case 'closest' string has to be used [-s/--SlopeRange closest]\n")
+    print("  [SlopeRange]             STR                OPTIONAL       After computing the average values for Resolution and Relevance,")
+    print("                                                             it is necessary to identify the best interval where the slope of this new curve")
+    print("                                                             is close to the target slope (as specified by --TargetSlope).")
+    print("                                                             Two ways to define this argument are possible:")
+    print("                                                             ● Define a percentage range around the target slope (default is 10%;")
+    print("                                                               e.g., if the target slope is -1, the interval is from -1.10 to -0.90),")
+    print("                                                               and select the rightmost value (i.e., with higher Resolution) within this range.")
+    print("                                                             ● Alternatively, use the string 'closest' to choose the slope value")
+    print("                                                               that is closest to the target slope (i.e., [-s/--SlopeRange closest]).\n")
     print("----------------------------------------------------------------------------------------------------------------------")
-    print("Hereafter the list of flags:\n");
-    
+    print("Hereafter the list of flags:\n")
+
     print("  -f   --file              FILE                              Data FILE containing Hs, Hk, and Nsites organized in three different rows")
+    print(" [-t] [--TargetSlope]      FLOAT                             Target slope for optimal interval selection (defaults to -1 if not set)")
     print(" [-d] [--DensityPoints]    INT                               Constant number of points for the calculation of average Hs and Hk")
-    print(" [-s] [--SlopeRange]       INT/FLOAT + %                     1) Range of slope close to -1 (<INT/FLOAT>%) (default=10% i.e. from -1.10 to -0.90)")
-    print(" [-s] [--SlopeRange]       STR                               2) if 'closest' string is set [-s closest], the closest value of slope to -1 is token")
+    print(" [-s] [--SlopeRange]       INT/FLOAT + %                     1) Define a percentage range around the target slope (<INT/FLOAT>%).")
+    print("                                                             Default is 10% (e.g., for a target slope of -1, the interval is from -1.10 to -0.90).")
+    print(" [-s] [--SlopeRange]       STR                               2) Use 'closest' to select the slope value closest to the target slope.")
     print(" [-h] [--help]                                               Give this help list\n")
     
-    print("Report bugs to <raffaele.fiorentini@unitn.it>\n")
+    print("Report bugs to <raffaello.potestio@unitn.it>\n")
     
  
     
 
 # Function: it prints the help of block.py program for BIN option
 def print_help_bin_HsHkplot():
-    print("Usage: python3 {} bin -f <Hs-Hk-N FILE> [-w <nWindows>] [-s <slope(%)>] ".format(sys.argv[0]))
-    print("   or: python3 {} bin --file <Hs-Hk-N FILE> [--NumberWindows <nWindows>] [--SlopeRange <slope(%)>] ".format(sys.argv[0]))
+    print("Usage: python3 {} bin -f <Hs-Hk-N FILE> [-t <slopeTarget>] [-w <nWindows>] [-s <slope(%)>] ".format(sys.argv[0]))
+    print("   or: python3 {} bin --file <Hs-Hk-N FILE> [--TargetSlope <slopeTarget>] [--NumberWindows <nWindows>] [--SlopeRange <slope(%)>] ".format(sys.argv[0]))
     
     print("\n--------------------------------------------------------------------------------------------------------------------")     
 
@@ -240,6 +246,10 @@ def print_help_bin_HsHkplot():
     print("                                                                | Hk-1       Hk-2       Hk-3       .....  Hk-N     |")
     print("                                                                | Nsites-1   Nsites-2   Nsites-3   .....  Nsites-N |")
     print("                                                                ----------------------------------------------------- \n")
+    print("  [TargetSlope]          FLOAT                OPTIONAL       Target slope for selecting the optimal interval.")
+    print("                                                             This value specifies the desired slope (e.g. -1.00) used")
+    print("                                                             to determine the best interval on the average Hs-Hk curve.")
+    print("                                                             If not provided, it defaults to -1.\n")
     print("  [NumberWindows]          INT                OPTIONAL       The Resolution range(that goes from 0 to 1) is divided in X windows")
     print("                                                             and a 'bin' is thus defined as 1/X (the default value is X = 50 windows,")
     print("                                                             and bin = 1/50 = 0.02.) In each windows, the average calculation")
@@ -247,31 +257,29 @@ def print_help_bin_HsHkplot():
     print("                                                             In this way, the computation of average values could be not fair and not precise")
     print("                                                             Use this option with caution. The default value for X is 50 windows;")
     print("                                                             Such value (Integer number) con be changed using this flag.\n")
-    print("  [SlopeRange]             STR                OPTIONAL       After computing the average values for Resolution and Relevance")
-    print("                                                             it is necessary to find the best interval where the slope of this new curve is -1.")
-    print("                                                             Two ways of defining this argument are possible:")
-    print("                                                             ● It is possible to define a range close to -1 in terms of percentage")
-    print("                                                               (default: from -1.10 to -0.90 that corresponds at 10%")
-    print("                                                               and taking the rightmost value in such range (i.e. with higher Resolution)")
-    print("                                                               Higher range values could be not good, since we want a slope very close to -1.")
-    print("                                                               Default value = 10%")
-    print("                                                             ● Another possibility is to take the closest value of slope to -1.")
-    print("                                                               In this case 'closest' string has to be used [-s/--SlopeRange closest]\n")
+    print("  [SlopeRange]             STR                OPTIONAL       After computing the average values for Resolution and Relevance,")
+    print("                                                             it is necessary to identify the best interval where the slope of this new curve")
+    print("                                                             is close to the target slope (as specified by --TargetSlope).")
+    print("                                                             Two ways to define this argument are possible:")
+    print("                                                             ● Define a percentage range around the target slope (default is 10%;")
+    print("                                                               e.g., if the target slope is -1, the interval is from -1.10 to -0.90),")
+    print("                                                               and select the rightmost value (i.e., with higher Resolution) within this range.")
+    print("                                                             ● Alternatively, use the string 'closest' to choose the slope value")
+    print("                                                               that is closest to the target slope (i.e., [-s/--SlopeRange closest]).\n")
     print("----------------------------------------------------------------------------------------------------------------------");
     print("Hereafter the list of flags:\n");
     
     print("  -f   --file              FILE                               Data FILE containing Hs, Hk, and Nsites organized in three different rows")
+    print(" [-t] [--TargetSlope]     FLOAT                              Target slope for optimal interval selection (defaults to -1 if not set)")
     print(" [-w] [--NumberWindows]    INT                                Number of windows (default = 50) into which the Resolution range is splitted")
-    print(" [-s] [--SlopeRange]       INT/FLOAT + %                      1) Range of slope close to -1 (<INT/FLOAT>%) (default=10% i.e. from -1.10 to -0.90)")
-    print(" [-s] [--SlopeRange]       STR                                2) if 'closest' string is set [-s closest], the closest value of slope to -1 is token")
+    print(" [-s] [--SlopeRange]       INT/FLOAT + %                     1) Define a percentage range around the target slope (<INT/FLOAT>%).")
+    print("                                                             Default is 10% (e.g., for a target slope of -1, the interval is from -1.10 to -0.90).")
+    print(" [-s] [--SlopeRange]       STR                               2) Use 'closest' to select the slope value closest to the target slope.")
     print(" [-h] [--help]                                                Give this help list\n")
     
-    print("Report bugs to <raffaele.fiorentini@unitn.it>\n")
+    print("Report bugs to <raffaello.potestio@unitn.it>\n")
     
-    
-    
-    
-    
+       
     
     
                
@@ -304,7 +312,7 @@ def print_summary(Natoms, ValueStep, nMapp, TotalFrames, nFrames_read, checkpoin
 
 
 # Function: It prints a summary of the arguments that will be employed in the calculation of Hs-Hk-plot. 
-def print_summary_HsHk_plot(DataFile, DensityPoints, NumberWindows, SlopeRange):
+def print_summary_HsHk_plot(DataFile, DensityPoints, NumberWindows, SlopeRange, TargetSlope):
     
     print("\n\n-----------------------------------------------------------")
     print("                           SUMMARY               ")
@@ -312,6 +320,7 @@ def print_summary_HsHk_plot(DataFile, DensityPoints, NumberWindows, SlopeRange):
 
     print("File Name         = {}".format(os.path.basename(DataFile)))
     print(f"Option            = {sys.argv[1]}")
+    print(f"Target Slope      = {TargetSlope}")
     if(sys.argv[1].strip()=="density"):
         print(f"DensityPoints     = {DensityPoints}")
     elif(sys.argv[1].strip()=="bin"):
@@ -323,8 +332,8 @@ def print_summary_HsHk_plot(DataFile, DensityPoints, NumberWindows, SlopeRange):
         SlopeRange_1Part = SlopeRange[:-1]
         SlopeRange_1Part = check_Int_Float_Str(SlopeRange_1Part)
         ValueSlope  = SlopeRange_1Part/100
-        SlopeLeft  = -1 - ValueSlope
-        SlopeRight = -1 + ValueSlope
+        SlopeLeft  = TargetSlope - ValueSlope
+        SlopeRight = TargetSlope + ValueSlope
             
         print("SlopeRange        = [{}, {}]".format(SlopeLeft, SlopeRight))
     print("\n-----------------------------------------------------------\n")
@@ -333,7 +342,7 @@ def print_summary_HsHk_plot(DataFile, DensityPoints, NumberWindows, SlopeRange):
     
     
 # Function: It prints of a file the summary of the arguments that will be employed in the calculation of Hs-Hk-plot. 
-def write_file_summary_HsHk_plot(g, DataFile, DensityPoints, NumberWindows, SlopeRange):
+def write_file_summary_HsHk_plot(g, DataFile, DensityPoints, NumberWindows, SlopeRange, TargetSlope):
     
     g.write("\n\n-----------------------------------------------------------\n")
     g.write("                           SUMMARY               \n")
@@ -352,8 +361,8 @@ def write_file_summary_HsHk_plot(g, DataFile, DensityPoints, NumberWindows, Slop
         SlopeRange_1Part = SlopeRange[:-1]
         SlopeRange_1Part = check_Int_Float_Str(SlopeRange_1Part)
         ValueSlope  = SlopeRange_1Part/100
-        SlopeLeft  = -1 - ValueSlope
-        SlopeRight = -1 + ValueSlope
+        SlopeLeft  = TargetSlope - ValueSlope
+        SlopeRight = TargetSlope + ValueSlope
             
         g.write("SlopeRange        = [{}, {}]\n".format(SlopeLeft, SlopeRight))
     g.write("\n\n-----------------------------------------------------------\n\n") 

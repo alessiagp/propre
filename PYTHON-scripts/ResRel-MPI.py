@@ -277,7 +277,9 @@ if __name__ == '__main__':
     pool.join()
     
     # 4.2 Completing the fullyAT RSD matrix merging the upper and lower symmetric triangular matrices, making a square symmetric matrix (the diagonal is made up of zeros)  
-    rsd_AT_mat = compute_complete_RSD_map(rsd_AT_mat, nFrames_read)  
+    #rsd_AT_mat = compute_complete_RSD_map(rsd_AT_mat, nFrames_read)  
+
+    rsd_AT_mat = np.hstack(rsd_AT_mat)
     
     print(rsd_AT_mat) 
     print(rsd_AT_mat.shape)
@@ -415,8 +417,9 @@ if __name__ == '__main__':
             #     (the diagonal is made up of zeros) 
 
             Nframes_reduced_Sub = len(positions_Sub)  
-            rsd_AT_mat_Sub      = compute_complete_RSD_map(rsd_AT_mat_Sub, Nframes_reduced_Sub)
-    
+            #rsd_AT_mat_Sub      = compute_complete_RSD_map(rsd_AT_mat_Sub, Nframes_reduced_Sub)
+
+            rsd_AT_mat_Sub = np.hstack(rsd_AT_mat_Sub)
     
     
             # 6.7 Creating the dendogram relative to the RSD map of decimated trajectory using the average linkage UPGMA algorithm 

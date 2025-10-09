@@ -119,13 +119,8 @@ The typical usage of the program consists in a call to `remove_H_atoms.py`, `Res
     </ul>  
 For a more comprehensive understanding of the program's functionality and implementation details, please refer to <b><a href="#5---resrel-mpipy">Section 5</a></b> in this documentation.</li><br>
  
-<li> <b><code>Hs-Hk-slope</code></b>: this code calculates the number of sites of a biomolecule from an atomistic trajectory, corresponding to a specific slope point on the previously computed Relevance–Resolution curve. The program generate a compact python output, containing:
-    <ul>
-    <li> pippo
-    <li> pluto
-    <li> paperino
-</li>
-    </ul>
+<li> <b><code>Hs-Hk-slope</code></b>: this code calculates the number of sites of a biomolecule from an atomistic trajectory, corresponding to a specific slope point on the previously computed Relevance–Resolution curve. The program generate a detailed python output and a text file <code>Opt-number-of-sites-TargetSlope.txt</code> that provides a summary of the arguments used and, more importantly, the optimal number of sites identified.
+
 Further details regarding the functionality and usage of this code will be provided in <b><a href="#6---hs-hk-plotpy">Section 6</a></b>. </li><br>
 
 </ul>
@@ -510,17 +505,31 @@ python3 Hs-Hk-plot.py bin --file <Hs-Hk-Nsites-${ProteinName}.txt> [--TargetSlop
 </div>
 
 ## 6.5 - Output
-<p align="justify"> This code generates a python datafile containing : </p>
+<p align="justify"> This code generates:  </p>
 
 <div align = "justify">
 <ul> 
-<li> <i><code>pippo</code></i>: </li><br>
-
-<li> <i><code>pippo</code></i>: </li><br>
-
-<li> <i><code>pippo</code></i>: </li><br>
-
-<code>Opt-number-of-sites.txt</code></i>: A text file that provides a summary of the arguments used and, more importantly, the optimal number of sites for a biomolecule derived from an atomistic trajectory, such that the loss of information after decimating atoms is minimized. This information is valuable for determining the appropriate number of retained sites that balances the preservation of essential structural information with the reduction in computational complexity. </li>
+  <li> <code>data_TargetSlope-.npz</code> compact python datafile containing :
+   <ul> 
+    <li> <code>Hs</code> : Resolution values (array).
+    <li> <code>Hk</code> : Relevance values (array).
+    <li> <code>N</code> : Number of sites associated to each (Hs, Hk) pair (array).
+    <li> <code>Hs_avg</code> : Resolution averaged per interval/bin (array).
+    <li> <code>Hk_avg</code> : Relevance averaged per interval/bin (array).
+    <li> <code>slope</code> :  Estimated derivative d(Hk_avg)/d(Hs_avg) between consecutive averaged points (array).
+    <li> <code>SlopeRange</code> : Criterion used to select the ``best-slope'' interval; either the string <code>closest</code> or a percentage string like  <code>5%</code>.
+    <li> <code>index_closest</code> : Indices (list of int) of intervals/bins selected as “best” according to <code>SlopeRange</code> and <code>TargetSlope</code>.
+    <li> <code>Hs_area_best_slope</code>: All original <code>Hs</code> values whose indices fall inside the selected interval(s) (array).
+    <li> <code>Hk_area_best_slope</code>: All original <code>Hk</code> values whose indices fall inside the selected interval(s) (array).
+    <li> <code>N_area_best_slope</code>: All original <code>N</code> values whose indices fall inside the selected interval(s) (array).
+    <li> <code>N_opt</code>: Estimated optimal number of sites (float; mean of <code>N_area_best_slope</code>).
+    <li> <code>std_N_opt</code>: Standard deviation of the optimal number of sites (float; std of <code>N_area_best_slope</code>).  
+    </li> 
+    </ul>
+    
+  <li> <code>Opt-number-of-sites.txt</code></i>: A text file that provides a summary of the arguments used and, more importantly, the optimal number of sites for a biomolecule derived from an atomistic trajectory, such that the loss of information after decimating atoms is minimized. This information is valuable for determining the appropriate number of retained sites that balances the preservation of essential structural information with the reduction in computational complexity. 
+    
+</li>
 </ul>
 </div>
 

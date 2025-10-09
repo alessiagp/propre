@@ -5,7 +5,7 @@ It processes the data in two modes:
   - 'density': groups points by fixed count (DensityPoints) after sorting by resolution.
   - 'bin': groups points in equal-length bins over the [0,1] resolution interval.
 For both modes, it computes the average resolution and relevance, calculates the derivative,
-selects the interval where the slope is closest to -1 (or within a user-defined percentage range),
+selects the interval where the slope is closest to TargetSlope (or within a user-defined percentage range),
 and finally estimates the optimal number of sites.
 """
 

@@ -27,28 +27,6 @@ from lib.inp_out import *
 from lib.general import *
 from lib.check_errors import *
 
-#def find_main_folder(desired_folder_name="PYTHON-scripts"):
-#    """
-#    Search upward from the current directory to locate the folder named 'desired_folder_name'.
-#    """
-#    current_directory = os.getcwd()
-#    while True:
-#        if desired_folder_name in os.listdir(current_directory):
-#            return current_directory
-#        elif current_directory == os.path.dirname(current_directory):
-#            print(f"ERROR. '{desired_folder_name}' folder has not been found. Please, check it out...\n")
-#            sys.exit(1)
-#        else:
-#            current_directory = os.path.dirname(current_directory)
-
-
-
-# Update sys.path for custom libraries by finding the main folder.
-#desired_path = find_main_folder("PYTHON-scripts")
-#python_modules_path = os.path.join(desired_path, "lib")
-#sys.path.append(python_modules_path)
-
-
 def nan_helper(y):
     """
     Helper function to handle NaN values.
